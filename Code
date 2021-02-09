@@ -1,0 +1,105 @@
+########### DOCUMENTATION #########
+### https://www.machinelearningplus.com/predictive-modeling/how-naive-bayes-algorithm-works-with-example-and-full-code/#9buildingnaivebayesclassifierinpython
+### https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification_report.html
+
+
+# Import packages
+from sklearn import *
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+
+
+# reading in data and subsetting
+Data1 = pd.read_csv()
+
+# drop the rows where at least one element is missing
+Data1.dropna()
+
+# subset the data
+Age18 = Data1[[ ]]
+
+Age18_clean = Age18.dropna(how = "any")
+
+# clean data
+
+Age_18_MDD = Age18_clean[ 
+    (Age18_clean.FJCI1001 != -4) & (Age18_clean.FJCI1001 != -10) & (Age18_clean.FJCI1001 != -1) &
+    (Age18_clean.cct2700 != -10) & (Age18_clean.cct2700 != -1) &
+    (Age18_clean.cct2701 != -10) & (Age18_clean.cct2701 != -1) &
+    (Age18_clean.cct2702 != -10) & (Age18_clean.cct2702 != -1) &
+    (Age18_clean.cct2703 != -10) & (Age18_clean.cct2703 != -1) &
+    (Age18_clean.cct2704 != -10) & (Age18_clean.cct2704 != -1) &
+    (Age18_clean.cct2705 != -10) & (Age18_clean.cct2705 != -1) &
+    (Age18_clean.cct2706 != -10) & (Age18_clean.cct2706 != -1) &
+    (Age18_clean.cct2707 != -10) & (Age18_clean.cct2707 != -1) &
+    (Age18_clean.cct2708 != -10) & (Age18_clean.cct2708 != -1) &
+    (Age18_clean.cct2709 != -10) & (Age18_clean.cct2709 != -1) &
+    (Age18_clean.cct2710 != -10) & (Age18_clean.cct2710 != -1) &
+    (Age18_clean.cct2711 != -10) & (Age18_clean.cct2711 != -1) &
+    (Age18_clean.cct2712 != -10) & (Age18_clean.cct2712 != -1)
+]
+
+
+# if loop to check if data is clean (can change value to anything)
+
+if -1 not in Age_18_MDD.values:
+    print('Clean')
+    
+if -1 in Age_18_MDD.values:
+    print('Not clean')
+    
+#split into training and test dataset
+training, testing = train_test_split(Age_18_MDD, test_size=0.3, random_state=0)
+
+training.info()
+testing.info()
+
+# Create the X, Y, Training and Test
+xtrain = training.drop('FJCI1001', axis=1)
+ytrain = training.loc[:, 'FJCI1001']
+xtest = testing.drop('FJCI1001', axis=1)
+ytest = testing.loc[:, 'FJCI1001']
+
+print(ytrain.unique())
+
+model = GaussianNB()
+
+model.fit(xtrain, ytrain)
+
+pred = model.predict(xtest)
+
+
+# create heatmap
+mat = confusion_matrix(pred, ytest)
+names = np.unique(pred)
+sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False,
+            xticklabels=names, yticklabels=names)
+plt.xlabel('Truth')
+plt.ylabel('Predicted')
+
+# WARNING - have removed 'zero division' line from this cell and cell below, need to look into whether that's important or not!
+
+from sklearn.metrics import f1_score
+
+F1_Score = f1_score(ytest, pred, labels=None, pos_label=1, average=None, sample_weight=None)
+F1_Score
+
+from sklearn.metrics import classification_report
+
+# metrics read out
+metrics = classification_report(ytest, pred, 
+    labels=None, target_names=None, sample_weight=None, digits=2, output_dict=False)
+metrics
+
+
+# need to check here which outcome is which 
+
+target_names = ['Outcome 1', 'Outcome 2'] 
+print(classification_report(ytest, pred, target_names=target_names))
+
